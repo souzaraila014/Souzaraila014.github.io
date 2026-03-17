@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raíla Souza | Social Media Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Google Translate -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'pt',
+                includedLanguages: 'en,es,fr,de,it,pt',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    
+    <style>
+        :root {
+            --primary: #8B7355;
+            --secondary: #D4A373;
+            --accent: #E9EDC9;
+            --dark: #2C1810;
+            --light: #FAEDCD;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #FAEDCD 0%, #FEFAE0 100%);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px) rotate(1deg);
+            box-shadow: 0 20px 40px -15px rgba(139, 115, 85, 0.3);
+        }
+        
+        .post-card {
+            background: white;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+        }
+        
+        .post-card::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, #D4A373, #E9EDC9, #8B7355);
+            z-index: -1;
+            border-radius: inherit;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .post-card:hover::before {
+            opacity: 1;
+        }
+        
+        .calendar-day {
+            transition: all 0.3s ease;
+        }
+        
+        .calendar-day:hover {
+            background: var(--secondary);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .tool-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .tool-icon:hover {
+            transform: translateY(-5px) rotate(5deg);
+            color: var(--primary);
+        }
+        
+        .blob {
+            position: absolute;
+            filter: blur(40px);
+            opacity: 0.4;
+            animation: move 20s infinite alternate;
+        }
+        
+        @keyframes move {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(50px, 50px) scale(1.1); }
+        }
+        
+        .social-float {
+            animation: socialFloat 4s ease-in-out infinite;
+        }
+        
+        @keyframes socialFloat {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+        
+        /* Google Translate Custom Styles */
+        .translate-container {
+            position: relative;
+            z-index: 100;
+        }
+        
+        .goog-te-gadget-simple {
+            background-color: rgba(255, 255, 255, 0.9) !important;
+            border: 2px solid #e5e5e5 !important;
+            border-radius: 9999px !important;
+            padding: 8px 16px !important;
+            font-size: 14px !important;
+            font-family: 'Inter', sans-serif !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        .goog-te-gadget-simple:hover {
+            border-color: #D4A373 !important;
+        }
+        
+        .goog-te-menu-value span {
+            color: #2C1810 !important;
+            font-weight: 500 !important;
+        }
+        
+        .goog-te-menu-value span:first-child {
+            display: none;
+        }
+        
+        .goog-te-menu-value:before {
+            content: '🌐 ';
+        }
+        
+        body > .skiptranslate {
+            display: none;
+        }
+        
+        .goog-te-banner-frame {
+            display: none !important;
+        }
+        
+        body {
+            top: 0 !important;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="grain"></div>
+    
+    <!-- Decorative Blobs -->
+    <div class="blob bg-orange-200 w-96 h-96 rounded-full top-0 left-0 -translate-x-1/2 -translate-y-1/2"></div>
+    <div class="blob bg-yellow-200 w-80 h-80 rounded-full bottom-0 right-0 translate-x-1/3 translate-y-1/3 animation-delay-2000"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-md z-40 border-b border-stone-200/50">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="font-bold text-xl tracking-tight text-stone-800">RS.</div>
+            
+            <!-- Google Translate Widget -->
+            <div class="translate-container hidden md:block" id="google_translate_element"></div>
+            
+            <div class="hidden md:flex gap-8 text-sm font-medium text-stone-600">
+                <a href="#sobre" class="hover:text-stone-900 transition-colors">Sobre</a>
+                <a href="#portfolio" class="hover:text-stone-900 transition-colors">Portfólio</a>
+                <a href="#calendario" class="hover:text-stone-900 transition-colors">Calendário</a>
+                <a href="#contato" class="hover:text-stone-900 transition-colors">Contato</a>
+            </div>
+            <button onclick="document.getElementById('contato').scrollIntoView({behavior: 'smooth'})" 
+                    class="bg-stone-800 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-stone-700 transition-all hover:scale-105">
+                Vamos conversar
+            </button>
+        </div>
+        
+        <!-- Mobile Translate -->
+        <div class="md:hidden px-6 pb-3">
+            <div class="translate-container" id="google_translate_element_mobile"></div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center justify-center relative pt-32 md:pt-20 px-6">
+        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-8 fade-in">
+                <div class="inline-block px-4 py-2 bg-white/60 backdrop-blur rounded-full border border-stone-200 text-sm font-medium text-stone-600 social-float">
+                    👋 Disponível para projetos
+                </div>
+                <h1 class="text-5xl md:text-7xl font-bold leading-tight text-stone-800">
+                    Criando conteúdo que <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-orange-500">conecta</span>
+                </h1>
+                <p class="text-lg text-stone-600 leading-relaxed max-w-lg">
+                    Sou Raíla Souza, Social Media Assistant especializada em transformar ideias em conteúdo digital organizado, criativo e consistente.
+                </p>
+                <div class="flex gap-4">
+                    <button onclick="document.getElementById('portfolio').scrollIntoView({behavior: 'smooth'})" 
+                            class="bg-stone-800 text-white px-8 py-4 rounded-full font-medium hover:bg-stone-700 transition-all hover:scale-105 flex items-center gap-2">
+                        Ver trabalhos <i data-lucide="arrow-down" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="relative fade-in" style="animation-delay: 0.2s">
+                <div class="relative z-10 grid grid-cols-2 gap-4">
+                    <div class="space-y-4 mt-8">
+                        <div class="bg-white p-6 rounded-2xl shadow-lg card-hover">
+                            <i data-lucide="coffee" class="w-8 h-8 text-amber-600 mb-3"></i>
+                            <p class="font-semibold text-stone-800">Café & Momentos</p>
+                            <p class="text-sm text-stone-500">Copywriting</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-lg card-hover">
+                            <i data-lucide="sparkles" class="w-8 h-8 text-purple-600 mb-3"></i>
+                            <p class="font-semibold text-stone-800">Moda Minimalista</p>
+                            <p class="text-sm text-stone-500">Conteúdo Visual</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-white p-6 rounded-2xl shadow-lg card-hover">
+                            <i data-lucide="heart" class="w-8 h-8 text-rose-500 mb-3"></i>
+                            <p class="font-semibold text-stone-800">Bem-Estar</p>
+                            <p class="text-sm text-stone-500">Engajamento</p>
+                        </div>
+                        <div class="bg-stone-800 text-white p-6 rounded-2xl shadow-lg card-hover">
+                            <i data-lucide="calendar" class="w-8 h-8 text-amber-300 mb-3"></i>
+                            <p class="font-semibold">Organização</p>
+                            <p class="text-sm text-stone-300">Calendário Editorial</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-tr from-amber-200/30 to-purple-200/30 rounded-full blur-3xl -z-10 scale-110"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre Section -->
+    <section id="sobre" class="py-24 px-6 bg-white/50">
+        <div class="max-w-4xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="fade-in">
+                    <h2 class="text-4xl font-bold mb-6 text-stone-800">Sobre mim</h2>
+                    <div class="space-y-4 text-stone-600 leading-relaxed">
+                        <p>
+                            Sou criadora de conteúdo iniciante com grande interesse em mídias sociais, escrita criativa e organização de conteúdo digital.
+                        </p>
+                        <p>
+                            Tenho facilidade para gerar ideias de posts, escrever legendas envolventes e criar designs simples utilizando Canva. Utilizo ferramentas de IA como ChatGPT para desenvolver ideias de conteúdo, estruturar calendários de postagens e manter consistência na comunicação das marcas.
+                        </p>
+                        <p class="font-medium text-stone-800">
+                            Busco colaborar com marcas que valorizam organização, criatividade e constância nas redes sociais.
+                        </p>
+                    </div>
+                    
+                    <div class="mt-8 flex flex-wrap gap-3">
+                        <span class="px-4 py-2 bg-amber-100 text-amber-800 rounded-full text-sm font-medium">Criatividade</span>
+                        <span class="px-4 py-2 bg-stone-200 text-stone-800 rounded-full text-sm font-medium">Organização</span>
+                        <span class="px-4 py-2 bg-orange-100 text-orange-800 rounded-full text-sm font-medium">Constância</span>
+                    </div>
+                </div>
+                <div class="fade-in relative" style="animation-delay: 0.2s">
+                    <div class="bg-gradient-to-br from-amber-100 to-stone-200 rounded-3xl p-8 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-white/30 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                        <h3 class="text-2xl font-bold mb-6 text-stone-800">Habilidades</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-center gap-3">
+                                <div class="w-2 h-2 bg-amber-600 rounded-full"></div>
+                                <span class="text-stone-700">Criação de posts no Canva</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <div class="w-2 h-2 bg-amber-600 rounded-full"></div>
+                                <span class="text-stone-700">Escrita de legendas para Instagram</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <div class="w-2 h-2 bg-amber-600 rounded-full"></div>
+                                <span class="text-stone-700">Planejamento de conteúdo</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <div class="w-2 h-2 bg-amber-600 rounded-full"></div>
+                                <span class="text-stone-700">Organização de calendário</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <div class="w-2 h-2 bg-amber-600 rounded-full"></div>
+                                <span class="text-stone-700">Uso de ChatGPT para copy</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <div class="w-2 h-2 bg-amber-600 rounded-full"></div>
+                                <span class="text-stone-700">Consistência de marca</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-24 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl font-bold mb-4 text-stone-800">Exemplos de Conteúdo</h2>
+                <p class="text-stone-600">Ideias de posts desenvolvidas para diferentes nichos</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Post 1: Café -->
+                <div class="post-card rounded-2xl p-8 fade-in card-hover">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="coffee" class="w-6 h-6 text-amber-700"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-stone-800">Marca de Café</h3>
+                            <p class="text-sm text-stone-500"> Lifestyle</p>
+                        </div>
+                    </div>
+                    <div class="bg-stone-50 rounded-xl p-6 mb-4 border border-stone-100">
+                        <p class="text-stone-700 italic leading-relaxed">
+                            "Good mornings start with great coffee. ☕<br><br>
+                            Take a moment to slow down, breathe, and enjoy the little rituals that make your day better."
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs px-3 py-1 bg-amber-50 text-amber-700 rounded-full">#CoffeeTime</span>
+                        <span class="text-xs px-3 py-1 bg-amber-50 text-amber-700 rounded-full">#MorningRitual</span>
+                        <span class="text-xs px-3 py-1 bg-amber-50 text-amber-700 rounded-full">#SimpleMoments</span>
+                    </div>
+                </div>
+
+                <!-- Post 2: Moda -->
+                <div class="post-card rounded-2xl p-8 fade-in card-hover" style="animation-delay: 0.1s">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-stone-200 rounded-full flex items-center justify-center">
+                            <i data-lucide="shirt" class="w-6 h-6 text-stone-700"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-stone-800">Marca de Moda</h3>
+                            <p class="text-sm text-stone-500">Minimalista</p>
+                        </div>
+                    </div>
+                    <div class="bg-stone-50 rounded-xl p-6 mb-4 border border-stone-100">
+                        <p class="text-stone-700 italic leading-relaxed">
+                            "Style is not about having more.<br><br>
+                            It's about choosing pieces that truly represent you.<br>
+                            Less noise. More personality."
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs px-3 py-1 bg-stone-100 text-stone-700 rounded-full">#MinimalStyle</span>
+                        <span class="text-xs px-3 py-1 bg-stone-100 text-stone-700 rounded-full">#ModernFashion</span>
+                        <span class="text-xs px-3 py-1 bg-stone-100 text-stone-700 rounded-full">#YourStyle</span>
+                    </div>
+                </div>
+
+                <!-- Post 3: Bem-Estar -->
+                <div class="post-card rounded-2xl p-8 fade-in card-hover" style="animation-delay: 0.2s">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="leaf" class="w-6 h-6 text-green-700"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-stone-800">Marca de Bem-Estar</h3>
+                            <p class="text-sm text-stone-500">Natureza</p>
+                        </div>
+                    </div>
+                    <div class="bg-stone-50 rounded-xl p-6 mb-4 border border-stone-100">
+                        <p class="text-stone-700 italic leading-relaxed">
+                            "Sometimes the best reset is simple:<br>
+                            step outside, breathe deeply, and reconnect with nature.<br><br>
+                            Your mind will thank you."
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs px-3 py-1 bg-green-50 text-green-700 rounded-full">#Wellbeing</span>
+                        <span class="text-xs px-3 py-1 bg-green-50 text-green-700 rounded-full">#SlowLiving</span>
+                        <span class="text-xs px-3 py-1 bg-green-50 text-green-700 rounded-full">#Balance</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calendário Section -->
+    <section id="calendario" class="py-24 px-6 bg-white/50">
+        <div class="max-w-5xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="fade-in">
+                    <h2 class="text-4xl font-bold mb-6 text-stone-800">Planejamento Estratégico</h2>
+                    <p class="text-stone-600 mb-8 leading-relaxed">
+                        Organização é a base de um bom conteúdo. Desenvolvo calendários editoriais que equilibram diferentes tipos de conteúdo para manter o engajamento e a consistência da marca ao longo da semana.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4 p-4 bg-white rounded-xl shadow-sm border border-stone-100">
+                            <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="target" class="w-5 h-5 text-amber-700"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-stone-800">Objetivo Claro</h4>
+                                <p class="text-sm text-stone-600">Cada dia tem uma função específica na jornada do cliente</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 p-4 bg-white rounded-xl shadow-sm border border-stone-100">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="refresh-cw" class="w-5 h-5 text-purple-700"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-stone-800">Rotatividade de Conteúdo</h4>
+                                <p class="text-sm text-stone-600">Variedade que mantém o feed interessante e dinâmico</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fade-in" style="animation-delay: 0.2s">
+                    <div class="bg-white rounded-3xl shadow-xl p-8 border border-stone-100">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-stone-800">Calendário Semanal</h3>
+                            <span class="text-sm text-stone-500 bg-stone-100 px-3 py-1 rounded-full">Exemplo</span>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="calendar-day flex items-center gap-4 p-4 rounded-xl bg-stone-50 cursor-pointer">
+                                <div class="w-12 h-12 bg-amber-200 rounded-full flex items-center justify-center font-bold text-amber-800">S</div>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800">Segunda-feira</p>
+                                    <p class="text-sm text-stone-600">Post motivacional da marca</p>
+                                </div>
+                                <i data-lucide="sunrise" class="w-5 h-5 text-amber-600"></i>
+                            </div>
+                            
+                            <div class="calendar-day flex items-center gap-4 p-4 rounded-xl bg-stone-50 cursor-pointer">
+                                <div class="w-12 h-12 bg-orange-200 rounded-full flex items-center justify-center font-bold text-orange-800">T</div>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800">Terça-feira</p>
+                                    <p class="text-sm text-stone-600">Produto ou serviço em destaque</p>
+                                </div>
+                                <i data-lucide="shopping-bag" class="w-5 h-5 text-orange-600"></i>
+                            </div>
+                            
+                            <div class="calendar-day flex items-center gap-4 p-4 rounded-xl bg-stone-50 cursor-pointer">
+                                <div class="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center font-bold text-blue-800">Q</div>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800">Quarta-feira</p>
+                                    <p class="text-sm text-stone-600">Dica ou conteúdo educativo</p>
+                                </div>
+                                <i data-lucide="book-open" class="w-5 h-5 text-blue-600"></i>
+                            </div>
+                            
+                            <div class="calendar-day flex items-center gap-4 p-4 rounded-xl bg-stone-50 cursor-pointer">
+                                <div class="w-12 h-12 bg-purple-200 rounded-full flex items-center justify-center font-bold text-purple-800">Q</div>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800">Quinta-feira</p>
+                                    <p class="text-sm text-stone-600">Bastidores ou processo da marca</p>
+                                </div>
+                                <i data-lucide="camera" class="w-5 h-5 text-purple-600"></i>
+                            </div>
+                            
+                            <div class="calendar-day flex items-center gap-4 p-4 rounded-xl bg-stone-50 cursor-pointer">
+                                <div class="w-12 h-12 bg-green-200 rounded-full flex items-center justify-center font-bold text-green-800">S</div>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800">Sexta-feira</p>
+                                    <p class="text-sm text-stone-600">Post leve para engajamento</p>
+                                </div>
+                                <i data-lucide="message-circle" class="w-5 h-5 text-green-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ferramentas Section -->
+    <section class="py-24 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-12 text-stone-800 fade-in">Ferramentas que Utilizo</h2>
+            <div class="flex flex-wrap justify-center gap-8 fade-in">
+                <div class="tool-icon flex flex-col items-center gap-3 p-6 bg-white rounded-2xl shadow-lg w-32">
+                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center text-2xl">🎨</div>
+                    <span class="font-semibold text-stone-700">Canva</span>
+                </div>
+                <div class="tool-icon flex flex-col items-center gap-3 p-6 bg-white rounded-2xl shadow-lg w-32">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center text-2xl">🤖</div>
+                    <span class="font-semibold text-stone-700">ChatGPT</span>
+                </div>
+                <div class="tool-icon flex flex-col items-center gap-3 p-6 bg-white rounded-2xl shadow-lg w-32">
+                    <div class="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center text-2xl">📸</div>
+                    <span class="font-semibold text-stone-700">Instagram</span>
+                </div>
+                <div class="tool-icon flex flex-col items-center gap-3 p-6 bg-white rounded-2xl shadow-lg w-32">
+                    <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center text-2xl">📅</div>
+                    <span class="font-semibold text-stone-700">Planejamento</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Disponibilidade & Contato -->
+    <section id="contato" class="py-24 px-6 bg-stone-900 text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.05\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        
+        <div class="max-w-4xl mx-auto relative z-10">
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="fade-in">
+                    <h2 class="text-4xl font-bold mb-6">Vamos trabalhar juntos?</h2>
+                    <p class="text-stone-300 mb-8 leading-relaxed">
+                        Estou disponível para colaborações de longo prazo com marcas que valorizam organização e criatividade nas redes sociais.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
+                                <i data-lucide="wifi" class="w-5 h-5 text-amber-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold">Trabalho remoto</p>
+                                <p class="text-sm text-stone-400">De qualquer lugar</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
+                                <i data-lucide="clock" class="w-5 h-5 text-amber-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold">5 horas por dia</p>
+                                <p class="text-sm text-stone-400">Disponibilidade consistente</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-amber-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold">Compromisso com prazos</p>
+                                <p class="text-sm text-stone-400">Organização garantida</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="fade-in" style="animation-delay: 0.2s">
+                    <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/10">
+                        <h3 class="text-2xl font-bold mb-6">Entre em contato</h3>
+                        <form class="space-y-4" onsubmit="event.preventDefault(); alert('Obrigada pelo interesse! Em um portfólio real, este formulário seria conectado a um serviço de email.');">
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-stone-300">Nome</label>
+                                <input type="text" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-amber-400 transition-colors text-white placeholder-stone-500" placeholder="Seu nome">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-stone-300">Email</label>
+                                <input type="email" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-amber-400 transition-colors text-white placeholder-stone-500" placeholder="seu@email.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2 text-stone-300">Mensagem</label>
+                                <textarea rows="4" class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:border-amber-400 transition-colors text-white placeholder-stone-500 resize-none" placeholder="Conte-me sobre seu projeto..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-stone-900 font-bold py-4 rounded-xl transition-all hover:scale-[1.02]">
+                                Enviar mensagem
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-stone-950 text-stone-400 py-8 px-6 text-center border-t border-stone-900">
+        <p class="text-sm">© 2024 Raíla Souza. Social Media Assistant.</p>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Initialize mobile translate element
+        if (window.innerWidth < 768) {
+            googleTranslateElementInit = function() {
+                new google.translate.TranslateElement({
+                    pageLanguage: 'pt',
+                    includedLanguages: 'en,es,fr,de,it,pt',
+                    layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                    autoDisplay: false
+                }, 'google_translate_element_mobile');
+            };
+        }
+        
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Interactive calendar days
+        document.querySelectorAll('.calendar-day').forEach(day => {
+            day.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                }, 100);
+            });
+        });
+        
+        // Parallax effect for blobs
+        document.addEventListener('mousemove', (e) => {
+            const blobs = document.querySelectorAll('.blob');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            blobs.forEach((blob, index) => {
+                const speed = (index + 1) * 20;
+                const xOffset = (window.innerWidth / 2 - e.clientX) / speed;
+                const yOffset = (window.innerHeight / 2 - e.clientY) / speed;
+                blob.style.transform = `translate(${xOffset}px, ${yOffset}px) scale(${1 + index * 0.1})`;
+            });
+        });
+    </script>
+</body>
+</html>
