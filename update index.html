@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raíla Souza | Social Media Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        :root {
+            --primary: #d4a373;
+            --secondary: #ccd5ae;
+            --accent: #e9edc9;
+            --dark: #333333;
+            --light: #faedcd;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #FAEDCD 0%, #FEFAE0 100%);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        .blob {
+            position: absolute;
+            filter: blur(40px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.05); }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .post-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .calendar-day {
+            transition: all 0.3s ease;
+        }
+        
+        .calendar-day:hover {
+            background: rgba(255, 255, 255, 0.8);
+            transform: translateX(5px);
+        }
+        
+        .tool-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .tool-icon:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* ===== TRADUTOR CUSTOMIZADO ===== */
+        .language-switcher {
+            position: relative;
+        }
+        
+        #translate-btn svg {
+            transition: transform 0.3s ease;
+        }
+        
+        #translate-btn.active svg {
+            transform: rotate(180deg);
+        }
+        
+        #language-dropdown {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            border: 1px solid #e7e5e4;
+            min-width: 160px;
+            z-index: 1000;
+        }
+        
+        #language-dropdown.hidden {
+            display: none;
+        }
+        
+        #language-dropdown.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .lang-option {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #44403c;
+            transition: all 0.2s;
+        }
+        
+        .lang-option:hover {
+            background-color: #f5f5f4;
+        }
+        
+        .lang-option.active-lang {
+            background-color: #e7e5e4;
+            color: #78716c;
+            font-weight: 600;
+        }
+        
+        [data-i18n] {
+            transition: opacity 0.2s ease;
+        }
+        
+        body > .skiptranslate,
+        .goog-te-banner-frame {
+            display: none !important;
+        }
+        
+        body {
+            top: 0 !important;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="grain"></div>
+    
+    <!-- Decorative Blobs -->
+    <div class="blob bg-orange-200 w-96 h-96 rounded-full top-0 left-0 -translate-x-1/2 -translate-y-1/2"></div>
+    <div class="blob bg-yellow-200 w-80 h-80 rounded-full bottom-0 right-0 translate-x-1/3 translate-y-1/3" style="animation-delay: 2s;"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-md z-40 border-b border-stone-200/50">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="font-bold text-xl tracking-tight text-stone-800">RS.</div>
+            
+            <!-- 🌐 TRADUTOR -->
+            <div class="language-switcher">
+                <button id="translate-btn" class="flex items-center gap-2 px-4 py-2 rounded-full bg-stone-100 hover:bg-stone-200 transition-all duration-300 text-stone-700 font-medium text-sm border border-stone-300">
+                    <span id="current-lang" class="uppercase font-bold">PT</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                
+                <div id="language-dropdown" class="hidden" role="menu">
+                    <button class="lang-option active-lang" data-lang="pt" role="menuitem">
+                        <span class="text-2xl">🇧🇷</span>
+                        <span>Português</span>
+                    </button>
+                    <button class="lang-option" data-lang="en" role="menuitem">
+                        <span class="text-2xl">🇺🇸</span>
+                        <span>English</span>
+                    </button>
+                    <button class="lang-option" data-lang="es" role="menuitem">
+                        <span class="text-2xl">🇪🇸</span>
+                        <span>Español</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Links do menu -->
+            <div class="hidden md:flex gap-8 text-sm font-medium text-stone-600">
+                <a href="#sobre" class="hover:text-stone-900 transition-colors" data-i18n="nav-sobre">Sobre</a>
+                <a href="#portfolio" class="hover:text-stone-900 transition-colors" data-i18n="nav-portfolio">Portfólio</a>
+                <a href="#contato" class="hover:text-stone-900 transition-colors" data-i18n="nav-contato">Contato</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="max-w-3xl">
+                <h1 class="text-5xl md:text-7xl font-bold text-stone-800 mb-6 leading-tight" data-i18n="hero-titulo">
+                    Social Media Assistant
+                </h1>
+                <p class="text-xl text-stone-600 mb-8 leading-relaxed" data-i18n="hero-subtitulo">
+                    Criadora de conteúdo com foco em mídias sociais
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Sobre Section -->
+    <section id="sobre" class="py-20 px-6 bg-white/50">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-stone-800 mb-8" data-i18n="sobre-titulo">Sobre Mim</h2>
+            <p class="text-lg text-stone-600 leading-relaxed max-w-3xl">
+                Sou criadora de conteúdo iniciante com grande interesse em mídias sociais, escrita criativa e organização de conteúdo digital.
+            </p>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="py-24 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="text-4xl font-bold mb-4 text-stone-800" data-i18n="portfolio-titulo">Exemplos de Conteúdo</h2>
+                <p class="text-stone-600" data-i18n="portfolio-subtitulo">Ideias de posts desenvolvidas para diferentes nichos</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Post 1: Café -->
+                <div class="post-card rounded-2xl p-8 fade-in card-hover">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="coffee" class="w-6 h-6 text-amber-700"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-stone-800" data-i18n="post1-titulo">Marca de Café</h3>
+                            <p class="text-sm text-stone-500">Lifestyle</p>
+                        </div>
+                    </div>
+                    <div class="bg-stone-50 rounded-xl p-6 mb-4 border border-stone-100">
+                        <p class="text-stone-700 italic leading-relaxed" data-i18n="post1-texto">
+                            "Good mornings start with great coffee. ☕<br><br>
+                            Take a moment to slow down, breathe, and enjoy the little rituals that make your day better."
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs px-3 py-1 bg-amber-50 text-amber-700 rounded-full">#CoffeeTime</span>
+                        <span class="text-xs px-3 py-1 bg-amber-50 text-amber-700 rounded-full">#MorningRitual</span>
+                        <span class="text-xs px-3 py-1 bg-amber-50 text-amber-700 rounded-full">#SimpleMoments</span>
+                    </div>
+                </div>
+
+                <!-- Post 2: Moda -->
+                <div class="post-card rounded-2xl p-8 fade-in card-hover" style="animation-delay: 0.1s">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-stone-200 rounded-full flex items-center justify-center">
+                            <i data-lucide="shirt" class="w-6 h-6 text-stone-700"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-stone-800" data-i18n="post2-titulo">Marca de Moda</h3>
+                            <p class="text-sm text-stone-500">Minimalista</p>
+                        </div>
+                    </div>
+                    <div class="bg-stone-50 rounded-xl p-6 mb-4 border border-stone-100">
+                        <p class="text-stone-700 italic leading-relaxed" data-i18n="post2-texto">
+                            "Style is not about having more.<br><br>
+                            It's about choosing pieces that truly represent you.<br>
+                            Less noise. More personality."
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs px-3 py-1 bg-stone-100 text-stone-700 rounded-full">#MinimalStyle</span>
+                        <span class="text-xs px-3 py-1 bg-stone-100 text-stone-700 rounded-full">#ModernFashion</span>
+                        <span class="text-xs px-3 py-1 bg-stone-100 text-stone-700 rounded-full">#YourStyle</span>
+                    </div>
+                </div>
+
+                <!-- Post 3: Bem-Estar -->
+                <div class="post-card rounded-2xl p-8 fade-in card-hover" style="animation-delay: 0.2s">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="leaf" class="w-6 h-6 text-green-700"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-stone-800" data-i18n="post3-titulo">Marca de Bem-Estar</h3>
+                            <p class="text-sm text-stone-500">Natureza</p>
+                        </div>
+                    </div>
+                    <div class="bg-stone-50 rounded-xl p-6 mb-4 border border-stone-100">
+                        <p class="text-stone-700 italic leading-relaxed" data-i18n="post3-texto">
+                            "Sometimes the best reset is simple:<br>
+                            step outside, breathe deeply, and reconnect with nature.<br><br>
+                            Your mind will thank you."
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="text-xs px-3 py-1 bg-green-50 text-green-700 rounded-full">#Wellbeing</span>
+                        <span class="text-xs px-3 py-1 bg-green-50 text-green-700 rounded-full">#SlowLiving</span>
+                        <span class="text-xs px-3 py-1 bg-green-50 text-green-700 rounded-full">#Balance</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calendário Section -->
+    <section id="calendario" class="py-24 px-6 bg-white/50">
+        <div class="max-w-5xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="fade-in">
+                    <h2 class="text-4xl font-bold mb-6 text-stone-800" data-i18n="calendario-titulo">Planejamento Estratégico</h2>
+                    <p class="text-stone-600 mb-8 leading-relaxed" data-i18n="calendario-texto">
+                        Organização é a base de um bom conteúdo. Desenvolvo calendários editoriais que equilibram diferentes tipos de conteúdo para manter o engajamento e a consistência da marca ao longo da semana.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4 p-4 bg-white rounded-xl shadow-sm border border-stone-100">
+                            <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="target" class="w-5 h-5 text-amber-700"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-stone-800" data-i18n="objetivo-titulo">Objetivo Claro</h4>
+                                <p class="text-sm text-stone-600" data-i18n="objetivo-texto">Cada dia tem uma função específica na jornada do cliente</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 p-4 bg-white rounded-xl shadow-sm border border-stone-100">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="refresh-cw" class="w-5 h-5 text-purple-700"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-stone-800" data-i18n="rotatividade-titulo">Rotatividade de Conteúdo</h4>
+                                <p class="text-sm text-stone-600" data-i18n="rotatividade-texto">Variedade que mantém o feed interessante e dinâmico</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fade-in" style="animation-delay: 0.2s">
+                    <div class="bg-white rounded-3xl shadow-xl p-8 border border-stone-100">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-stone-800" data-i18n="calendario-semanal">Calendário Semanal</h3>
+                            <span class="text-sm text-stone-500 bg-stone-100 px-3 py-1 rounded-full" data-i18n="exemplo">Exemplo</span>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="calendar-day flex items-center gap-4 p-4 rounded-xl bg-stone-50 cursor-pointer">
+                                <div class="w-12 h-12 bg-amber-200 rounded-full flex items-center justify-center font-bold text-amber-800">S</div>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800" data-i18n="segunda">Segunda-feira</p>
+                                    <p class="text-sm text-stone-600" data-i18n="segunda-texto">Post motivacional da marca</p>
+                                </div>
+                                <i data-lucide="sunrise" class="w-5 h-5 text-amber-600"></i>
+                            </div>
+                            
+                            <div class="calendar-day flex items-center gap-4 p-4 rounded-xl bg-stone-50 cursor-pointer">
+                                <div class="w-12 h-12 bg-orange-200 rounded-full flex items-center justify-center font-bold text-orange-800">T</div>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800" data-i18n="terca">Terça-feira</p>
+                                    <p class="text-sm text-stone-600" data-i18n="terca-texto">Produto ou serviço em destaque</p>
+                                </div>
+                                <i data-lucide="shopping-bag" class="w-5 h-5 text-orange-600"></i>
+                            </div>
+                            
+                            <div class="calendar-day flex items-center gap-4 p-4 rounded-xl bg-stone-50 cursor-pointer">
+                                <div class="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center font-bold text-blue-800">Q</div>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800" data-i18n="quarta">Quarta-feira</p>
+                                    <p class="text-sm text-stone-600" data-i18n="quarta-texto">Dica ou conteúdo educativo</p>
+                                </div>
+                                <i data-lucide="book-open" class="w-5 h-5 text-blue-600"></i>
+                            </div>
+                            
+                            <div class="calendar-day flex items-center gap-4 p-4 rounded-xl bg-stone-50 cursor-pointer">
+                                <div class="w-12 h-12 bg-purple-200 rounded-full flex items-center justify-center font-bold text-purple-800">Q</div>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-stone-800" data-i18n="quinta">Quinta-feira</p>
+                                    <p class="text-sm text
